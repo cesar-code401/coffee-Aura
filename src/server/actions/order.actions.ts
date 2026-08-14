@@ -108,7 +108,8 @@ export async function createOrder(input: CreateOrderInput) {
         include: {
           items: {
             include: { modifiers: true }
-          }
+          },
+          payments: true
         }
       });
 
@@ -119,7 +120,7 @@ export async function createOrder(input: CreateOrderInput) {
             shiftId: activeShift?.id,
             amount: orderTotal,
             method: data.paymentMethod,
-            status: 'PAID'
+            status: data.paymentMethod === 'QR_TRANSFER' ? 'PENDING' : 'PAID'
           }
         });
       }

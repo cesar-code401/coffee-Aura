@@ -12,7 +12,7 @@ import { createOrder } from "@/server/actions/order.actions";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { OrderType } from "@prisma/client";
-import { StripeCheckout } from "./StripeCheckout";
+import Image from "next/image";
 
 export function CartDrawer({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const { items, getSubtotal, removeItem, updateQuantity, orderType, setOrderType, tableId, clearCart } = useCartStore();
@@ -43,7 +43,7 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean, onClose: () =
     setIsPaying(true);
   };
 
-  const handlePaymentSuccess = async (stripeSessionId: string) => {
+  const handlePaymentSuccess = async () => {
     try {
       setIsSubmitting(true);
       
@@ -61,7 +61,7 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean, onClose: () =
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim() || null,
         notes: finalNotes || null,
-        paymentMethod: 'CARD', // Ya pagó por Stripe
+        paymentMethod: 'QR_TRANSFER', // Pago manual por QR
         items: items.map(i => ({
           productId: i.productId,
           quantity: i.quantity,
@@ -112,9 +112,28 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <Button variant="outline" onClick={() => setIsPaying(false)}>← Volver</Button>
-                <h3 className="font-semibold text-lg">Pago Seguro</h3>
+                <h3 className="font-semibold text-lg">Pago por Transferencia</h3>
               </div>
-              <StripeCheckout amount={subtotal} onSuccess={handlePaymentSuccess} />
+              
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 text-center space-y-4 shadow-sm">
+                <h4 className="font-bold text-stone-800">Escanea para pagar</h4>
+                <div className="relative w-48 h-48 mx-auto border border-stone-100 rounded-xl overflow-hidden p-2 bg-white">
+                  <Image src="/images/qr-ganadero.png" alt="QR Banco Ganadero" fill className="object-contain" />
+                </div>
+                <div className="text-sm text-stone-600 bg-stone-50 p-3 rounded-lg border border-stone-100">
+                  <p className="font-semibold text-stone-900">Banco Ganadero</p>
+                  <p>Monto a transferir: <strong className="text-lg text-emerald-600">${subtotal.toFixed(2)}</strong></p>
+                </div>
+                
+                <Button 
+                  className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full shadow-lg transition-all"
+                  onClick={handlePaymentSuccess}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Verificando..." : "Ya realicé el pago"}
+                </Button>
+                <p className="text-xs text-stone-400 mt-2">El cajero verificará el pago antes de preparar la orden.</p>
+              </div>
             </div>
           ) : items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-muted-foreground pt-12">

@@ -2,6 +2,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { approvePayment } from "@/server/actions/payment.actions";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface TicketReceiptProps {
   order: any | null;
@@ -10,10 +13,28 @@ interface TicketReceiptProps {
 }
 
 export function TicketReceipt({ order, isOpen, onClose }: TicketReceiptProps) {
+  const [isApproving, setIsApproving] = useState(false);
+  const [paymentApproved, setPaymentApproved] = useState(false);
+
   if (!order) return null;
+
+  const isQrTransfer = order.paymentMethod === 'QR_TRANSFER';
+  const hasPendingPayment = order.payments?.some((p: any) => p.status === 'PENDING') && !paymentApproved;
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleApprove = async () => {
+    setIsApproving(true);
+    const res = await approvePayment(order.id);
+    if (res.success) {
+      toast({ title: "Pago Aprobado", description: "El pago fue verificado. Emitiendo factura..." });
+      setPaymentApproved(true);
+    } else {
+      toast({ title: "Error", description: res.error, variant: "destructive" });
+    }
+    setIsApproving(false);
   };
 
   return (
@@ -66,9 +87,20 @@ export function TicketReceipt({ order, isOpen, onClose }: TicketReceiptProps) {
           </div>
         </div>
 
-        <div className="flex gap-4 mt-4 no-print">
-          <Button variant="outline" className="w-full" onClick={onClose}>New Order</Button>
-          <Button className="w-full" onClick={handlePrint}>Print Receipt</Button>
+        <div className="flex flex-col gap-3 mt-4 no-print">
+          {isQrTransfer && hasPendingPayment && (
+            <Button 
+              className="w-full bg-orange-500 hover:bg-orange-600 font-bold h-12 text-white animate-pulse" 
+              onClick={handleApprove}
+              disabled={isApproving}
+            >
+              {isApproving ? "Verificando..." : "⚠️ APROBAR PAGO QR RECIBIDO"}
+            </Button>
+          )}
+          <div className="flex gap-4">
+            <Button variant="outline" className="w-full h-12" onClick={onClose}>Nueva Orden</Button>
+            <Button className="w-full h-12" onClick={handlePrint}>Imprimir Ticket</Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

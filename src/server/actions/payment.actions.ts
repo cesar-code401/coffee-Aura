@@ -24,3 +24,24 @@ export async function createPaymentIntent(amount: number, metadata?: Record<stri
     return { success: false, error: error.message || "Failed to initialize payment" };
   }
 }
+
+export async function approvePayment(orderId: string) {
+  try {
+    const { prisma } = await import('@/lib/prisma');
+    const payment = await prisma.payment.findFirst({
+      where: { orderId: orderId, status: 'PENDING' }
+    });
+
+    if (!payment) return { success: false, error: "Pago no encontrado o ya aprobado" };
+
+    // Update payment to PAID
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: 'PAID' }
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
