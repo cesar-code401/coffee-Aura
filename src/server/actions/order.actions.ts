@@ -81,6 +81,7 @@ export async function createOrder(input: CreateOrderInput) {
           customerName: data.customerName,
           customerPhone: data.customerPhone,
           paymentMethod: data.paymentMethod,
+          paymentStatus: data.paymentMethod === 'QR_TRANSFER' ? 'PENDING' : 'PAID',
           total: orderTotal,
           notes: data.notes,
           items: {
@@ -108,8 +109,7 @@ export async function createOrder(input: CreateOrderInput) {
         include: {
           items: {
             include: { modifiers: true }
-          },
-          payments: true
+          }
         }
       });
 

@@ -40,6 +40,12 @@ export async function approvePayment(orderId: string) {
       data: { status: 'PAID' }
     });
 
+    // Update order paymentStatus to PAID
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { paymentStatus: 'PAID' }
+    });
+
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

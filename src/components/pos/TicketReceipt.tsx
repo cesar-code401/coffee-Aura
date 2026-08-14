@@ -19,7 +19,7 @@ export function TicketReceipt({ order, isOpen, onClose }: TicketReceiptProps) {
   if (!order) return null;
 
   const isQrTransfer = order.paymentMethod === 'QR_TRANSFER';
-  const hasPendingPayment = order.payments?.some((p: any) => p.status === 'PENDING') && !paymentApproved;
+  const hasPendingPayment = order.paymentStatus === 'PENDING' && !paymentApproved;
 
   const handlePrint = () => {
     window.print();
