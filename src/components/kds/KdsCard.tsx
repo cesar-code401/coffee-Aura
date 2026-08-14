@@ -44,7 +44,7 @@ export function KdsCard({ order, audioEnabled }: KdsCardProps) {
 
   const handleNextStatus = async () => {
     setIsUpdating(true);
-    let nextStatus = OrderStatus.IN_PROGRESS;
+    let nextStatus: OrderStatus = OrderStatus.IN_PROGRESS;
     if (order.status === OrderStatus.RECEIVED) nextStatus = OrderStatus.IN_PROGRESS;
     else if (order.status === OrderStatus.IN_PROGRESS) nextStatus = OrderStatus.READY;
     else if (order.status === OrderStatus.READY) nextStatus = OrderStatus.COMPLETED;

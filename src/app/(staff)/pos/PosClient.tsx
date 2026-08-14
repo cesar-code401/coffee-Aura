@@ -94,7 +94,7 @@ export function PosClient({ categories, tables }: PosClientProps) {
       setLastOrder(res.order);
       setIsReceiptOpen(true);
       resetTicket();
-      toast({ title: "Order Success", description: `Order #${res.order.orderNumber} sent to KDS.` });
+      toast({ title: "Order Success", description: `Order #${res.order?.orderNumber} sent to KDS.` });
     } else {
       toast({ title: "Order Failed", description: res.error, variant: "destructive" });
     }

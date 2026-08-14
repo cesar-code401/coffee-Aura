@@ -14,7 +14,7 @@ export default async function AdminDashboardPage() {
       where: { createdAt: { gte: today } }
     }),
     prisma.payment.aggregate({
-      where: { createdAt: { gte: today }, status: PaymentStatus.COMPLETED },
+      where: { createdAt: { gte: today }, status: PaymentStatus.PAID },
       _sum: { amount: true }
     }),
     prisma.shift.findFirst({

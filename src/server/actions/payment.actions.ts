@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 // This is a server action, ensure you have STRIPE_SECRET_KEY in your .env
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', {
-  apiVersion: '2025-01-27.acacia',
+  apiVersion: '2023-10-16' as any,
 });
 
 export async function createPaymentIntent(amount: number, metadata?: Record<string, string>) {

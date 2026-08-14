@@ -17,7 +17,7 @@ export default function ReservationsPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<CreateReservationInput>({
-    resolver: zodResolver(createReservationSchema),
+    resolver: zodResolver(createReservationSchema) as any,
     defaultValues: {
       customerName: "",
       customerPhone: "",

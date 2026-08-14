@@ -119,7 +119,7 @@ export async function createOrder(input: CreateOrderInput) {
             shiftId: activeShift?.id,
             amount: orderTotal,
             method: data.paymentMethod,
-            status: 'COMPLETED'
+            status: 'PAID'
           }
         });
       }

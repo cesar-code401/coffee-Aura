@@ -40,7 +40,7 @@ export async function closeShift(shiftId: string, closedBy: string, endingCash: 
     if (shift.status === 'CLOSED') return { success: false, error: 'Shift already closed' };
 
     // Calculate expected cash
-    const cashPayments = shift.payments.filter(p => p.method === 'CASH' && p.status === 'COMPLETED');
+    const cashPayments = shift.payments.filter(p => p.method === 'CASH' && p.status === 'PAID');
     const cashTotal = cashPayments.reduce((sum, p) => sum + p.amount, 0);
     const expectedCash = shift.startingCash + cashTotal;
 
