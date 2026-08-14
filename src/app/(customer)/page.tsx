@@ -3,7 +3,7 @@ import { CustomerMenuClient } from "./CustomerMenuClient";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, Star, Coffee, Zap, User, Clock, Flame, Droplets } from "lucide-react";
-
+import { Suspense } from "react";
 export const revalidate = 60; // Revalidate every minute
 
 export default async function CustomerMenuPage() {
@@ -146,7 +146,9 @@ export default async function CustomerMenuPage() {
 
       {/* Menu Section */}
       <section id="menu-section" className="max-w-7xl mx-auto px-4 w-full py-16 md:py-24 scroll-mt-20 z-20 relative">
-        <CustomerMenuClient categories={categories as any} />
+        <Suspense fallback={<div className="flex items-center justify-center p-12"><div className="animate-spin h-8 w-8 border-2 border-stone-900 rounded-full border-t-transparent"></div></div>}>
+          <CustomerMenuClient categories={categories as any} />
+        </Suspense>
       </section>
     </>
   );
